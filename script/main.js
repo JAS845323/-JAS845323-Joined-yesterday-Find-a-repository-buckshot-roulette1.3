@@ -1,17 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 初始化遊戲
+    // 确保DOM完全加载后初始化
     Game.init();
     
-    // 綁定按鈕事件
-    document.getElementById('shoot-self').addEventListener('click', () => {
-        Game.playerShoot('self');
+    // 绑定按钮事件（使用事件委托避免重复绑定）
+    document.getElementById('revolver').addEventListener('click', (e) => {
+        if (e.target.id === 'shoot-self') Game.playerShoot('self');
+        if (e.target.id === 'shoot-ai') Game.playerShoot('ai');
     });
-    
-    document.getElementById('shoot-ai').addEventListener('click', () => {
-        Game.playerShoot('ai');
-    });
-    
-    // 預載資源
+
+    // 预加载资源
     Utils.preloadSounds();
     Utils.preloadImages();
 });
