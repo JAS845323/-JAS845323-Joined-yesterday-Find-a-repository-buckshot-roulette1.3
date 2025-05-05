@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buckshot Roulette - 血腥版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="battlefield">
+        <!-- AI區域 -->
+        <div class="ai-zone">
+            <div id="ai-health" class="health-bar dripping">
+                <div class="blood-fill"></div>
+                <div class="crack-overlay"></div>
+                <span class="health-text">AI: 100%</span>
+            </div>
+            <div id="ai-items" class="item-slots"></div>
+        </div>
+
+        <!-- 中央輪盤 -->
+        <div id="revolver" class="bloody-gun">
+            <div id="chamber-display"></div>
+            <button id="shoot-self" class="bloody-btn">對自己開槍</button>
+            <button id="shoot-ai" class="bloody-btn">對AI開槍</button>
+        </div>
+
+        <!-- 玩家區域 -->
+        <div class="player-zone">
+            <div id="player-health" class="health-bar pulsing">
+                <div class="blood-fill"></div>
+                <div class="vein-overlay"></div>
+                <span class="health-text">玩家: 100%</span>
+            </div>
+            <div id="player-items" class="item-slots"></div>
+        </div>
+    </div>
+
+    <div id="round-display">第一局</div>
+    <div id="message-display"></div>
+
+    <script src="script/utils.js"></script>
+    <script src="script/items.js"></script>
+    <script src="script/ai.js"></script>
+    <script src="script/game.js"></script>
+    <script src="script/main.js"></script>
+</body>
+</html>
