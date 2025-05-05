@@ -1,79 +1,63 @@
 class Items {
     static useItem(item, user) {
+        const isPlayer = (user === 'player');
+        
         switch(item) {
             case 'huazi':
-                this.useHuazi(user);
+                if (isPlayer) {
+                    Game.playerHealth = Math.min(Game.playerHealth + 1, 3);
+                    Game.showMessage('你吸了口烟，恢复1点生命！');
+                } else {
+                    Game.aiHealth = Math.min(Game.aiHealth + 1, 3);
+                }
                 break;
+
             case 'handcuffs':
-                this.useHandcuffs(user);
+                Game.showMessage(`${isPlayer ? '你' : 'AI'}使用了手铐！`);
+                if (isPlayer) {
+                    setTimeout(() => {
+                        Game.showMessage('AI的回合被跳过！');
+                        Game.playerTurn = true;
+                        Game.updateUI();
+                    }, 1500);
+                } else {
+                    Game.showMessage('你的下一回合被跳过！');
+                    Game.playerTurn = false;
+                    setTimeout(() => Game.aiTurn(), 1500);
+                }
                 break;
+
             case 'knife':
-                this.useKnife(user);
+                Game.showMessage(`${isPlayer ? '你' : 'AI'}锯短了枪管，下一发伤害翻倍！`);
+                // 实际伤害处理在射击逻辑中
                 break;
+
             case 'drink':
-                this.useDrink(user);
+                if (Game.chamber.length > 0) {
+                    const discarded = Game.chamber.pop();
+                    Game.showMessage(`啤酒冲走了${discarded.isLive ? '实弹' : '空包弹'}！`);
+                }
                 break;
+
             case 'magnifier':
-                this.useMagnifier(user);
+                if (Game.chamber.length > 0) {
+                    const nextBullet = Game.chamber[Game.chamber.length - 1];
+                    Game.showMessage(`下一发是${nextBullet.isLive ? '💀实弹' : '✅空包弹'}！`);
+                }
                 break;
         }
-        
+
         Utils.playSound('item-use.mp3');
-    }
-    
-    static useHuazi(user) {
-        if (user === 'player') {
-            Game.playerHealth = Math.min(Game.playerHealth + 1, 3);
-        } else {
-            Game.aiHealth = Math.min(Game.aiHealth + 1, 3);
-        }
         Game.updateUI();
     }
-    
-    static useHandcuffs(user) {
-        if (user === 'player') {
-            // 跳過AI下一回合
-            setTimeout(() => {
-                Game.showMessage('AI被手銬鎖住，跳過一回合！');
-                Game.playerTurn = true;
-                Game.updateUI();
-            }, 1500);
-        } else {
-            // AI使用手銬，跳過玩家下一回合
-            Game.showMessage('AI用手銬鎖住你，跳過你的回合！');
-            Game.playerTurn = false;
-            setTimeout(() => Game.aiTurn(), 1500);
-        }
-    }
-    
-    static useKnife(user) {
-        // 下一發子彈傷害翻倍
-        Game.showMessage('槍管被割短，下一發傷害翻倍！');
-        // 實際傷害處理在射擊邏輯中
-    }
-    
-    static useDrink(user) {
-        if (Game.chamber.length > 0) {
-            const discarded = Game.chamber.pop();
-            Game.showMessage(`啤酒沖走了${discarded.isLive ? '實彈' : '空包彈'}！`);
-            Game.updateUI();
-        }
-    }
-    
-    static useMagnifier(user) {
-        if (Game.chamber.length > 0) {
-            const nextBullet = Game.chamber[Game.chamber.length - 1];
-            Game.showMessage(`下一發是${nextBullet.isLive ? '實彈' : '空包彈'}！`);
-        }
-    }
-    
+
     static getItemName(item) {
         const names = {
-            'huazi': '香菸',
-            'handcuffs': '手銬',
-            'knife': '手鋸',
+            'huazi': '香烟',
+            'handcuffs': '手铐',
+            'knife': '手锯',
             'drink': '啤酒',
-            'magnifier': '放大鏡'
+            'magnifier': '放大镜'
         };
         return names[item] || item;
     }
