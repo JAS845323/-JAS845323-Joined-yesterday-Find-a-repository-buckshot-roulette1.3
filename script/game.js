@@ -1,132 +1,144 @@
 class Game {
+    /**
+     * 初始化遊戲
+     */
     static init() {
         console.log("初始化血腥輪盤...");
         this.round = 1;
         this.playerHealth = 3;
         this.aiHealth = 3;
-        this.currentBullets = [];
         this.chamber = [];
         this.playerTurn = true;
         this.playerItems = [];
         this.aiItems = [];
-        
+
         this.setupRound();
         this.updateUI();
     }
-    
+
+    /**
+     * 設置新一輪的遊戲狀態
+     */
     static setupRound() {
-        let bulletCount = this.round + 1;
-        let liveBullets = Math.max(1, Math.ceil(bulletCount / 2));
-        
-        this.currentBullets = [];
-        for (let i = 0; i < bulletCount; i++) {
-            this.currentBullets.push({
-                isLive: i < liveBullets,
-                revealed: false
-            });
-        }
-        
+        const bulletCount = this.round + 1;
+        const liveBullets = Math.max(1, Math.ceil(bulletCount / 2));
+
+        this.chamber = Array.from({ length: bulletCount }, (_, i) => ({
+            isLive: i < liveBullets,
+            revealed: false,
+        }));
+
         this.shuffleBullets();
         this.distributeItems();
     }
-    
+
+    /**
+     * 將子彈隨機打亂
+     */
     static shuffleBullets() {
-        this.chamber = [...this.currentBullets];
         for (let i = this.chamber.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [this.chamber[i], this.chamber[j]] = [this.chamber[j], this.chamber[i]];
         }
     }
-    
+
+    /**
+     * 分發道具給玩家和AI
+     */
     static distributeItems() {
-        this.playerItems = [];
-        this.aiItems = [];
-        
         const allItems = ['huazi', 'handcuffs', 'knife', 'drink', 'magnifier'];
         const itemCount = this.round === 1 ? 0 : this.round + 1;
-        
-        for (let i = 0; i < itemCount; i++) {
-            this.playerItems.push(allItems[Math.floor(Math.random() * allItems.length)]);
-            this.aiItems.push(allItems[Math.floor(Math.random() * allItems.length)]);
-        }
+
+        this.playerItems = this.getRandomItems(allItems, itemCount);
+        this.aiItems = this.getRandomItems(allItems, itemCount);
     }
-    
+
+    /**
+     * 隨機選擇道具
+     * @param {Array} items 道具池
+     * @param {number} count 道具數量
+     * @returns {Array} 選擇的道具
+     */
+    static getRandomItems(items, count) {
+        return Array.from({ length: count }, () =>
+            items[Math.floor(Math.random() * items.length)]
+        );
+    }
+
+    /**
+     * 玩家射擊行為
+     * @param {string} target 射擊目標 ('self' 或 'ai')
+     */
     static playerShoot(target) {
         if (!this.playerTurn || this.chamber.length === 0) {
             this.nextRound();
             return;
         }
-        
+
         const bullet = this.chamber.pop();
-        const isLive = bullet.isLive;
-        
-        Utils.playSound(isLive ? 'shot.mp3' : 'click.mp3');
-        
+        Utils.playSound(bullet.isLive ? 'shot.mp3' : 'click.mp3');
+
         if (target === 'self') {
-            if (isLive) {
-                this.playerHealth--;
-                this.showMessage('💀 你中彈了！');
-                this.playerTurn = false;
-                this.checkGameOver();
-                if (this.playerHealth > 0) setTimeout(() => this.aiTurn(), 1500);
-            } else {
-                this.showMessage('✅ 空包彈！繼續你的回合');
-            }
+            this.handleShot(bullet.isLive, 'player');
         } else {
-            this.playerTurn = false;
-            if (isLive) {
-                this.aiHealth--;
-                this.showMessage('💀 AI中彈了！');
-            } else {
-                this.showMessage('✅ 空包彈！');
-            }
-            this.checkGameOver();
-            if (this.aiHealth > 0) setTimeout(() => this.aiTurn(), 1500);
+            this.handleShot(bullet.isLive, 'ai');
         }
-        
+
         this.updateUI();
     }
-    
+
+    /**
+     * 處理射擊結果
+     * @param {boolean} isLive 是否命中
+     * @param {string} target 射擊目標 ('player' 或 'ai')
+     */
+    static handleShot(isLive, target) {
+        const isPlayer = target === 'player';
+        const healthKey = isPlayer ? 'playerHealth' : 'aiHealth';
+
+        if (isLive) {
+            this[healthKey]--;
+            this.showMessage(isPlayer ? '💀 你中彈了！' : '💀 AI中彈了！');
+        } else {
+            this.showMessage(isPlayer ? '✅ 空包彈！繼續你的回合' : '✅ 空包彈！');
+        }
+
+        this.checkGameOver();
+
+        if (isLive || !isPlayer) {
+            this.playerTurn = !isPlayer;
+            if (!isPlayer && this.aiHealth > 0) setTimeout(() => this.aiTurn(), 1500);
+        }
+    }
+
+    /**
+     * AI 行為邏輯
+     */
     static aiTurn() {
         if (this.chamber.length === 0) {
             this.nextRound();
             return;
         }
-        
+
         const action = AI.makeDecision();
         console.log("AI 行動:", action);
-        
+
         if (action.startsWith('USE_')) {
-            const item = action.split('_')[1].toLowerCase();
-            this.useAIItem(item);
+            this.useAIItem(action.split('_')[1].toLowerCase());
             this.aiTurn();
             return;
         }
-        
+
         const bullet = this.chamber.pop();
-        const isLive = bullet.isLive;
-        
-        if (action === 'SHOOT_SELF') {
-            if (isLive) {
-                this.aiHealth--;
-                this.showMessage('AI對自己開槍... 💀 中彈了！');
-            } else {
-                this.showMessage('AI對自己開槍... ✅ 空包彈！');
-            }
-        } else {
-            if (isLive) {
-                this.playerHealth--;
-                this.showMessage('AI對你開槍... 💀 你中彈了！');
-            } else {
-                this.showMessage('AI對你開槍... ✅ 空包彈！');
-            }
-        }
-        
-        this.checkGameOver();
-        this.playerTurn = true;
+        this.handleShot(bullet.isLive, action === 'SHOOT_SELF' ? 'ai' : 'player');
+
         this.updateUI();
     }
-    
+
+    /**
+     * 使用AI道具
+     * @param {string} item 道具名稱
+     */
     static useAIItem(item) {
         const index = this.aiItems.indexOf(item);
         if (index !== -1) {
@@ -134,69 +146,92 @@ class Game {
             Items.useItem(item, 'ai');
         }
     }
-    
+
+    /**
+     * 進入下一輪
+     */
     static nextRound() {
         this.showMessage('🔁 彈匣空了，進入下一輪！');
         this.setupRound();
         this.updateUI();
     }
-    
+
+    /**
+     * 檢查遊戲是否結束
+     */
     static checkGameOver() {
         if (this.playerHealth <= 0) {
-            if (this.round < 3) {
-                this.playerHealth = 1;
-                this.showMessage('⚡ 你被除顫器救活了！');
-                Utils.playSound('electric-zap.mp3');
-            } else {
-                this.showMessage('☠️ 遊戲結束！你死了...');
-                this.endGame(false);
-            }
+            this.handleGameOver(false);
         } else if (this.aiHealth <= 0) {
-            if (this.round < 3) {
-                this.round++;
-                this.aiHealth = 3;
-                this.setupRound();
-                this.showMessage(`🎯 進入第 ${this.round} 局！`);
-            } else {
-                this.showMessage('🎉 恭喜！你擊敗了AI！');
-                this.endGame(true);
-            }
+            this.handleGameOver(true);
         }
     }
-    
+
+    /**
+     * 處理遊戲結束邏輯
+     * @param {boolean} isPlayerWin 是否玩家獲勝
+     */
+    static handleGameOver(isPlayerWin) {
+        if (isPlayerWin) {
+            this.round++;
+            if (this.round > 3) {
+                this.showMessage('🎉 恭喜！你擊敗了AI！');
+                this.endGame(true);
+            } else {
+                this.aiHealth = 3;
+                this.showMessage(`🎯 進入第 ${this.round} 局！`);
+                this.setupRound();
+            }
+        } else {
+            this.showMessage(this.round < 3 ? '⚡ 你被除顫器救活了！' : '☠️ 遊戲結束！你死了...');
+            if (this.round >= 3) this.endGame(false);
+            else this.playerHealth = 1;
+        }
+    }
+
+    /**
+     * 更新UI
+     */
     static updateUI() {
         document.getElementById('player-health').querySelector('.blood-fill').style.width = `${(this.playerHealth / 3) * 100}%`;
         document.getElementById('ai-health').querySelector('.blood-fill').style.width = `${(this.aiHealth / 3) * 100}%`;
-        
         document.getElementById('round-display').textContent = `第${this.round}局`;
-        
+
         this.updateItemSlots('player');
         this.updateItemSlots('ai');
     }
-    
+
+    /**
+     * 更新道具欄
+     * @param {string} who 玩家或AI ('player' 或 'ai')
+     */
     static updateItemSlots(who) {
         const container = document.getElementById(`${who}-items`);
         container.innerHTML = '';
-        
+
         const items = who === 'player' ? this.playerItems : this.aiItems;
-        
+
         items.forEach(item => {
             const itemElement = document.createElement('div');
             itemElement.className = 'item-icon';
             itemElement.style.backgroundImage = `url('assets/images/items/${item}.png')`;
             itemElement.title = Items.getItemName(item);
-            
+
             if (who === 'player') {
                 itemElement.addEventListener('click', () => this.usePlayerItem(item));
             }
-            
+
             container.appendChild(itemElement);
         });
     }
-    
+
+    /**
+     * 玩家使用道具
+     * @param {string} item 道具名稱
+     */
     static usePlayerItem(item) {
         if (!this.playerTurn) return;
-        
+
         const index = this.playerItems.indexOf(item);
         if (index !== -1) {
             this.playerItems.splice(index, 1);
@@ -204,14 +239,22 @@ class Game {
             this.updateUI();
         }
     }
-    
+
+    /**
+     * 顯示訊息
+     * @param {string} msg 訊息內容
+     */
     static showMessage(msg) {
         const msgElement = document.getElementById('message-display');
         msgElement.textContent = msg;
         msgElement.style.opacity = 1;
-        setTimeout(() => msgElement.style.opacity = 0, 2000);
+        setTimeout(() => (msgElement.style.opacity = 0), 2000);
     }
-    
+
+    /**
+     * 結束遊戲
+     * @param {boolean} isWin 是否玩家獲勝
+     */
     static endGame(isWin) {
         document.body.style.backgroundColor = isWin ? 'var(--blood-red)' : 'var(--dried-blood)';
         document.getElementById('shoot-self').disabled = true;
