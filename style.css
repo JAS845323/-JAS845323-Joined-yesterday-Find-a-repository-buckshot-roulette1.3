@@ -3,18 +3,16 @@
     --dried-blood: #3a0000;
     --vein-blue: #1d0b38;
 }
-
 body {
     margin: 0;
     padding: 0;
-    background: 
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-        url('assets/images/backgrounds/peeling-wallpaper.jpg');
+    background: url('assets/images/backgrounds/peeling-wallpaper.jpg') no-repeat center center fixed;
     background-size: cover;
     font-family: 'Creepster', cursive;
     color: white;
     overflow: hidden;
     user-select: none;
+}
 }
 
 #battlefield {
