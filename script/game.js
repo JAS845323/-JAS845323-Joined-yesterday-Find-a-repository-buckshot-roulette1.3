@@ -31,6 +31,7 @@ class Game {
         this.shuffleBullets();
         this.distributeItems();
         this.showMessage(`🔁 第 ${this.round} 局開始！`);
+        this.updateUI();
     }
 
     /**
@@ -44,7 +45,7 @@ class Game {
     }
 
     /**
-     * 分發道具給玩家和AI
+     * 分發道具給玩家和 AI
      */
     static distributeItems() {
         const allItems = ['huazi', 'handcuffs', 'knife', 'drink', 'magnifier'];
@@ -106,9 +107,8 @@ class Game {
 
         this.checkGameOver();
 
-        if (isLive || !isPlayer) {
-            this.playerTurn = !isPlayer;
-            if (!isPlayer && this.aiHealth > 0) setTimeout(() => this.aiTurn(), 1500);
+        if (!isLive && !isPlayer) {
+            setTimeout(() => this.aiTurn(), 1500); // AI 繼續執行回合
         }
     }
 
@@ -137,7 +137,7 @@ class Game {
     }
 
     /**
-     * 使用AI道具
+     * 使用 AI 道具
      * @param {string} item 道具名稱
      */
     static useAIItem(item) {
@@ -155,11 +155,10 @@ class Game {
         if (this.chamber.length === 0) {
             this.round++;
             if (this.round > 3) {
-                this.showMessage('🎉 恭喜！你擊敗了AI！');
+                this.showMessage('🎉 恭喜！你擊敗了 AI！');
                 this.endGame(true);
             } else {
                 this.setupRound();
-                this.updateUI();
             }
         }
     }
@@ -181,7 +180,7 @@ class Game {
      */
     static handleGameOver(isPlayerWin) {
         if (isPlayerWin) {
-            this.showMessage('🎉 恭喜！你擊敗了AI！');
+            this.showMessage('🎉 恭喜！你擊敗了 AI！');
             this.endGame(true);
         } else {
             this.showMessage('☠️ 遊戲結束！你死了...');
@@ -190,12 +189,12 @@ class Game {
     }
 
     /**
-     * 更新UI
+     * 更新 UI
      */
     static updateUI() {
         document.getElementById('player-health').querySelector('.blood-fill').style.width = `${(this.playerHealth / 3) * 100}%`;
         document.getElementById('ai-health').querySelector('.blood-fill').style.width = `${(this.aiHealth / 3) * 100}%`;
-        document.getElementById('round-display').textContent = `第${this.round}局`;
+        document.getElementById('round-display').textContent = `第 ${this.round} 局`;
 
         this.updateItemSlots('player');
         this.updateItemSlots('ai');
@@ -203,7 +202,7 @@ class Game {
 
     /**
      * 更新道具欄
-     * @param {string} who 玩家或AI ('player' 或 'ai')
+     * @param {string} who 玩家或 AI ('player' 或 'ai')
      */
     static updateItemSlots(who) {
         const container = document.getElementById(`${who}-items`);
