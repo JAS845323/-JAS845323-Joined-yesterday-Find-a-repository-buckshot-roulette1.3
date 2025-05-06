@@ -28,7 +28,7 @@ class AI {
         }
 
         // 基本決策：根據危險程度選擇自殺或攻擊玩家
-        const suicideProbability = 0.3 + dangerLevel * 0.4; // 自殺概率隨危險程度增加
+        const suicideProbability = 0.3 + dangerLevel * 0.4;
         return Math.random() < suicideProbability ? 'SHOOT_SELF' : 'SHOOT_PLAYER';
     }
 }
