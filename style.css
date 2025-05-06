@@ -1,30 +1,30 @@
 :root {
     --blood-red: #8a0303;
     --dried-blood: #3a0000;
+    --vein-blue: #1d0b38;
 }
 
 body {
     margin: 0;
     padding: 0;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url('assets/images/backgrounds/peeling-wallpaper.jpg');
     font-family: 'Creepster', cursive;
     color: white;
     overflow: hidden;
+    user-select: none;
 }
 
-#battlefield {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    height: 100vh;
-    padding: 20px;
-}
-
+/* 血條樣式 */
 .health-bar {
     position: relative;
     height: 30px;
     width: 100%;
     background-color: #222;
-    border: 2px solid var(--blood-red);
+    border: 2px solid var(--dried-blood);
+    border-radius: 5px;
+    overflow: hidden;
     margin-bottom: 20px;
 }
 
@@ -32,29 +32,67 @@ body {
     height: 100%;
     width: 100%;
     background-color: var(--blood-red);
-    transition: width 0.3s;
+    transition: width 0.3s ease;
 }
 
+/* 道具欄樣式 */
 .item-slots {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 2px solid var(--dried-blood);
+    background: url('assets/images/ui/stained-wood.png');
+    border: 3px solid var(--dried-blood);
+    border-radius: 5px;
 }
 
+.item-icon {
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.item-icon:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px #ff0000);
+}
+
+/* 按鈕樣式 */
 .bloody-btn {
     padding: 10px 20px;
+    margin: 10px;
     background-color: var(--dried-blood);
     color: white;
     border: none;
+    border-radius: 5px;
     font-family: 'Creepster', cursive;
+    font-size: 1.2rem;
     cursor: pointer;
+    transition: all 0.3s;
 }
 
 .bloody-btn:hover {
     background-color: var(--blood-red);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px red;
 }
 
-/* 其他樣式... */
+/* 動畫效果 */
+@keyframes bullet-fired {
+    0%   { transform: scale(1.5); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 0.2; }
+}
+
+.dripping::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, transparent, var(--blood-red), transparent);
+    opacity: 0.7;
+}
