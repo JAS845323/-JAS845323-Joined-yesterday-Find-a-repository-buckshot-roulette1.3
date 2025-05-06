@@ -30,6 +30,7 @@ class Game {
 
         this.shuffleBullets();
         this.distributeItems();
+        this.showMessage(`🔁 第 ${this.round} 局開始！`);
     }
 
     /**
@@ -151,9 +152,16 @@ class Game {
      * 進入下一輪
      */
     static nextRound() {
-        this.showMessage('🔁 彈匣空了，進入下一輪！');
-        this.setupRound();
-        this.updateUI();
+        if (this.chamber.length === 0) {
+            this.round++;
+            if (this.round > 3) {
+                this.showMessage('🎉 恭喜！你擊敗了AI！');
+                this.endGame(true);
+            } else {
+                this.setupRound();
+                this.updateUI();
+            }
+        }
     }
 
     /**
@@ -173,19 +181,11 @@ class Game {
      */
     static handleGameOver(isPlayerWin) {
         if (isPlayerWin) {
-            this.round++;
-            if (this.round > 3) {
-                this.showMessage('🎉 恭喜！你擊敗了AI！');
-                this.endGame(true);
-            } else {
-                this.aiHealth = 3;
-                this.showMessage(`🎯 進入第 ${this.round} 局！`);
-                this.setupRound();
-            }
+            this.showMessage('🎉 恭喜！你擊敗了AI！');
+            this.endGame(true);
         } else {
-            this.showMessage(this.round < 3 ? '⚡ 你被除顫器救活了！' : '☠️ 遊戲結束！你死了...');
-            if (this.round >= 3) this.endGame(false);
-            else this.playerHealth = 1;
+            this.showMessage('☠️ 遊戲結束！你死了...');
+            this.endGame(false);
         }
     }
 
