@@ -20,31 +20,23 @@ class Game {
      * 設置新一輪的遊戲狀態
      */
     static setupRound() {
-        // 根據規則設定每局子彈數量和實彈數量
         const bulletCounts = [3, 5, 7]; // 每局子彈總數
         const liveBulletCounts = [1, 2, 3]; // 每局實彈數量
 
-        // 設定子彈數量和實彈數量
         const bulletCount = bulletCounts[this.round - 1];
         const liveBullets = liveBulletCounts[this.round - 1];
 
-        // 恢復玩家和 AI 的血量至滿血
-        this.playerHealth = 3; // 玩家滿血
-        this.aiHealth = 3; // AI 滿血
+        this.playerHealth = 3;
+        this.aiHealth = 3;
 
-        // 初始化子彈
         this.chamber = Array.from({ length: bulletCount }, (_, i) => ({
             isLive: i < liveBullets,
             revealed: false,
         }));
 
-        // 隨機打亂子彈順序
         this.shuffleBullets();
-
-        // 分發道具
         this.distributeItems();
 
-        // 更新 UI 並顯示回合開始訊息
         this.showMessage(`🔁 第 ${this.round} 局開始！`);
         this.updateUI();
     }
@@ -96,12 +88,7 @@ class Game {
         const bullet = this.chamber.pop();
         Utils.playSound(bullet.isLive ? 'shot.mp3' : 'click.mp3');
 
-        if (target === 'self') {
-            this.handleShot(bullet.isLive, 'player');
-        } else {
-            this.handleShot(bullet.isLive, 'ai');
-        }
-
+        this.handleShot(bullet.isLive, target === 'self' ? 'player' : 'ai');
         this.updateUI();
     }
 
@@ -124,7 +111,7 @@ class Game {
         this.checkGameOver();
 
         if (!isLive && !isPlayer) {
-            setTimeout(() => this.aiTurn(), 1500); // AI 繼續執行回合
+            setTimeout(() => this.aiTurn(), 1500);
         }
     }
 
@@ -137,7 +124,7 @@ class Game {
         } else if (this.aiHealth <= 0) {
             this.round++;
             if (this.round > 3) {
-                this.handleGameOver(true); // 第 3 局擊敗 AI，玩家獲勝
+                this.handleGameOver(true);
             } else {
                 this.setupRound();
             }
@@ -149,13 +136,8 @@ class Game {
      * @param {boolean} isPlayerWin 是否玩家獲勝
      */
     static handleGameOver(isPlayerWin) {
-        if (isPlayerWin) {
-            this.showMessage('🎉 恭喜！你擊敗了 AI！');
-            this.endGame(true);
-        } else {
-            this.showMessage('☠️ 遊戲結束！你死了...');
-            this.endGame(false);
-        }
+        this.showMessage(isPlayerWin ? '🎉 恭喜！你擊敗了 AI！' : '☠️ 遊戲結束！你死了...');
+        this.endGame(isPlayerWin);
     }
 
     /**
