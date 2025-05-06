@@ -20,16 +20,31 @@ class Game {
      * 設置新一輪的遊戲狀態
      */
     static setupRound() {
-        const bulletCount = this.round + 1;
-        const liveBullets = Math.max(1, Math.ceil(bulletCount / 2));
+        // 根據規則設定每局子彈數量和實彈數量
+        const bulletCounts = [3, 5, 7]; // 每局子彈總數
+        const liveBulletCounts = [1, 2, 3]; // 每局實彈數量
 
+        // 設定子彈數量和實彈數量
+        const bulletCount = bulletCounts[this.round - 1];
+        const liveBullets = liveBulletCounts[this.round - 1];
+
+        // 恢復玩家和 AI 的血量至滿血
+        this.playerHealth = 3; // 玩家滿血
+        this.aiHealth = 3; // AI 滿血
+
+        // 初始化子彈
         this.chamber = Array.from({ length: bulletCount }, (_, i) => ({
             isLive: i < liveBullets,
             revealed: false,
         }));
 
+        // 隨機打亂子彈順序
         this.shuffleBullets();
+
+        // 分發道具
         this.distributeItems();
+
+        // 更新 UI 並顯示回合開始訊息
         this.showMessage(`🔁 第 ${this.round} 局開始！`);
         this.updateUI();
     }
@@ -48,9 +63,10 @@ class Game {
      * 分發道具給玩家和 AI
      */
     static distributeItems() {
-        const allItems = ['huazi', 'handcuffs', 'knife', 'drink', 'magnifier'];
-        const itemCount = this.round === 1 ? 0 : this.round + 1;
+        const itemCounts = [0, 2, 4]; // 每局玩家和 AI 的道具數量
+        const itemCount = itemCounts[this.round - 1];
 
+        const allItems = ['huazi', 'handcuffs', 'knife', 'drink', 'magnifier'];
         this.playerItems = this.getRandomItems(allItems, itemCount);
         this.aiItems = this.getRandomItems(allItems, itemCount);
     }
@@ -113,64 +129,18 @@ class Game {
     }
 
     /**
-     * AI 行為邏輯
-     */
-    static aiTurn() {
-        if (this.chamber.length === 0) {
-            this.nextRound();
-            return;
-        }
-
-        const action = AI.makeDecision();
-        console.log("AI 行動:", action);
-
-        if (action.startsWith('USE_')) {
-            this.useAIItem(action.split('_')[1].toLowerCase());
-            this.aiTurn();
-            return;
-        }
-
-        const bullet = this.chamber.pop();
-        this.handleShot(bullet.isLive, action === 'SHOOT_SELF' ? 'ai' : 'player');
-
-        this.updateUI();
-    }
-
-    /**
-     * 使用 AI 道具
-     * @param {string} item 道具名稱
-     */
-    static useAIItem(item) {
-        const index = this.aiItems.indexOf(item);
-        if (index !== -1) {
-            this.aiItems.splice(index, 1);
-            Items.useItem(item, 'ai');
-        }
-    }
-
-    /**
-     * 進入下一輪
-     */
-    static nextRound() {
-        if (this.chamber.length === 0) {
-            this.round++;
-            if (this.round > 3) {
-                this.showMessage('🎉 恭喜！你擊敗了 AI！');
-                this.endGame(true);
-            } else {
-                this.setupRound();
-            }
-        }
-    }
-
-    /**
      * 檢查遊戲是否結束
      */
     static checkGameOver() {
         if (this.playerHealth <= 0) {
             this.handleGameOver(false);
         } else if (this.aiHealth <= 0) {
-            this.handleGameOver(true);
+            this.round++;
+            if (this.round > 3) {
+                this.handleGameOver(true); // 第 3 局擊敗 AI，玩家獲勝
+            } else {
+                this.setupRound();
+            }
         }
     }
 
