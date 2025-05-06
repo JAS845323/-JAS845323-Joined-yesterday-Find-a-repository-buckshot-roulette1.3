@@ -3,134 +3,45 @@
     --dried-blood: #3a0000;
     --vein-blue: #1d0b38;
     --bullet-hole: url('assets/images/ui/bullet-hole.png');
+    --splatter-dark: rgba(138, 3, 3, 0.6);
 }
 
 body {
     margin: 0;
     padding: 0;
     background: 
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
         url('assets/images/backgrounds/peeling-wallpaper.jpg');
     font-family: 'Creepster', cursive;
     color: white;
     overflow: hidden;
     user-select: none;
-}
-
-#battlefield {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    height: 100vh;
-    padding: 20px;
-}
-
-.ai-zone, .player-zone {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px;
-}
-
-.health-bar {
-    position: relative;
-    height: 30px;
-    width: 100%;
-    background-color: #222;
-    border: 2px solid #444;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.blood-fill {
-    height: 100%;
-    width: 100%;
-    background-color: var(--blood-red);
-    transition: width 0.3s ease;
-}
-
-.dripping::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: linear-gradient(to right, transparent, var(--blood-red), transparent);
-    opacity: 0.7;
-}
-
-.pulsing {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 5px var(--blood-red); }
-    50% { box-shadow: 0 0 20px var(--blood-red); }
-    100% { box-shadow: 0 0 5px var(--blood-red); }
-}
-
-.item-slots {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    padding: 10px;
-    background: url('assets/images/ui/stained-wood.png');
-    border: 3px solid var(--dried-blood);
-    border-radius: 5px;
-    box-shadow: 0 0 15px var(--blood-red);
-}
-
-.item-icon {
-    width: 50px;
-    height: 50px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
-    transition: transform 0.2s;
+    backdrop-filter: blur(2px);
 }
 
 .item-icon:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 5px #ff0000);
+    transform: scale(1.15) rotate(-2deg);
+    filter: drop-shadow(0 0 8px var(--blood-red));
 }
 
-#revolver {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.bloody-btn {
-    padding: 10px 20px;
-    margin: 10px;
-    background-color: var(--dried-blood);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-family: 'Creepster', cursive;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.bloody-btn:hover {
-    background-color: var(--blood-red);
-    transform: scale(1.05);
-    box-shadow: 0 0 10px red;
-}
-
-#round-display {
+.blood-splatter {
     position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2rem;
-    color: var(--blood-red);
-    text-shadow: 0 0 5px black;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 200;
+    background-image: var(--bullet-hole);
+    background-size: 25%;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    animation: splatter-fade 0.7s ease-in-out;
+}
+
+@keyframes splatter-fade {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(1); }
 }
 
 #message-display {
@@ -139,34 +50,17 @@ body {
     left: 50%;
     transform: translateX(-50%);
     font-size: 1.5rem;
-    color: white;
-    text-shadow: 0 0 5px black;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px 20px;
+    color: #ffffff;
+    text-shadow: 0 0 10px var(--blood-red);
+    background-color: rgba(0, 0, 0, 0.75);
+    padding: 12px 24px;
     border-radius: 5px;
+    border: 1px solid var(--blood-red);
+    animation: flicker 2s infinite alternate;
 }
 
-/* 血跡效果 */
-.blood-splatter {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 100;
-    background-image: var(--bullet-hole);
-    background-size: 30%;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0;
-    transition: opacity 0.5s;
-}
-
-/* 子彈動畫 */
-@keyframes bullet-fired {
-    0% { transform: scale(1.5); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 0.2; }
-}
-
-.bullet-fired {
-    animation: bullet-fired 0.3s linear;
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.85; }
+    100% { opacity: 1; }
 }
