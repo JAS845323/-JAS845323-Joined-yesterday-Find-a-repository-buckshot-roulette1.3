@@ -13,7 +13,8 @@
         <div class="ai-zone">
             <div id="ai-health" class="health-bar dripping">
                 <div class="blood-fill"></div>
-                <span class="health-text">AI: 3/3</span>
+                <div class="crack-overlay"></div>
+                <span class="health-text">AI: 100%</span>
             </div>
             <div id="ai-items" class="item-slots"></div>
         </div>
@@ -29,7 +30,8 @@
         <div class="player-zone">
             <div id="player-health" class="health-bar pulsing">
                 <div class="blood-fill"></div>
-                <span class="health-text">玩家: 3/3</span>
+                <div class="vein-overlay"></div>
+                <span class="health-text">玩家: 100%</span>
             </div>
             <div id="player-items" class="item-slots"></div>
         </div>
@@ -38,7 +40,6 @@
     <div id="round-display">第一局</div>
     <div id="message-display"></div>
 
-    <!-- 按順序加載JS -->
     <script src="script/utils.js"></script>
     <script src="script/items.js"></script>
     <script src="script/ai.js"></script>
