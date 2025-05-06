@@ -15,7 +15,6 @@ class Game {
     }
     
     static setupRound() {
-        // 根據回合設置子彈
         let bulletCount = this.round + 1;
         let liveBullets = Math.max(1, Math.ceil(bulletCount / 2));
         
@@ -166,14 +165,11 @@ class Game {
     }
     
     static updateUI() {
-        // 更新血條
         document.getElementById('player-health').querySelector('.blood-fill').style.width = `${(this.playerHealth / 3) * 100}%`;
         document.getElementById('ai-health').querySelector('.blood-fill').style.width = `${(this.aiHealth / 3) * 100}%`;
         
-        // 更新回合顯示
         document.getElementById('round-display').textContent = `第${this.round}局`;
         
-        // 更新道具欄
         this.updateItemSlots('player');
         this.updateItemSlots('ai');
     }
