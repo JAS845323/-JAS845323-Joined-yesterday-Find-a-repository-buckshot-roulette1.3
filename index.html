@@ -1,48 +1,42 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buckshot Roulette - 血腥版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <title>血腥輪盤遊戲</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="battlefield">
-        <!-- AI區域 -->
-        <div class="ai-zone">
-            <div id="ai-health" class="health-bar dripping">
-                <div class="blood-fill"></div>
-                <span class="health-text">AI: 100%</span>
+    <div id="game-container">
+        <div id="round-display">第 1 局</div>
+        
+        <div id="health-bars">
+            <div id="player-health">
+                <div class="label">玩家生命</div>
+                <div class="health-bar">
+                    <div class="blood-fill"></div>
+                </div>
             </div>
-            <div id="ai-items" class="item-slots"></div>
+            <div id="ai-health">
+                <div class="label">AI 生命</div>
+                <div class="health-bar">
+                    <div class="blood-fill"></div>
+                </div>
+            </div>
         </div>
 
-        <!-- 中央輪盤 -->
-        <div id="revolver" class="bloody-gun">
-            <div id="chamber-display"></div>
-            <button id="shoot-self" class="bloody-btn">對自己開槍</button>
-            <button id="shoot-ai" class="bloody-btn">對AI開槍</button>
+        <div id="actions">
+            <button id="shoot-self">射擊自己</button>
+            <button id="shoot-ai">射擊 AI</button>
         </div>
 
-        <!-- 玩家區域 -->
-        <div class="player-zone">
-            <div id="player-health" class="health-bar pulsing">
-                <div class="blood-fill"></div>
-                <span class="health-text">玩家: 100%</span>
-            </div>
-            <div id="player-items" class="item-slots"></div>
-        </div>
+        <div id="message-display"></div>
+        <button id="next-round-button" style="display: none;">下一回合</button>
     </div>
 
-    <div id="round-display">第一局</div>
-    <div id="message-display"></div>
+    <div id="blood-splatter-player" class="blood-splatter"></div>
+    <div id="blood-splatter-ai" class="blood-splatter"></div>
 
-    <!-- 血跡效果容器 -->
-    <div class="blood-splatter" id="blood-splatter-player"></div>
-    <div class="blood-splatter" id="blood-splatter-ai"></div>
-
-    <!-- JavaScript文件 -->
     <script src="script/utils.js"></script>
     <script src="script/items.js"></script>
     <script src="script/ai.js"></script>
