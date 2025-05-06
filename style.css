@@ -2,7 +2,6 @@
     --blood-red: #8a0303;
     --dried-blood: #3a0000;
     --vein-blue: #1d0b38;
-    --bullet-hole: url('assets/images/ui/bullet-hole.png');
 }
 
 body {
@@ -45,7 +44,7 @@ body {
 
 .blood-fill {
     height: 100%;
-    width: 100%;
+    width: 100%; /* 用於控制健康條的填滿比例 */
     background-color: var(--blood-red);
     transition: width 0.3s ease;
 }
@@ -154,7 +153,7 @@ body {
     height: 100%;
     pointer-events: none;
     z-index: 100;
-    background-image: var(--bullet-hole);
+    background-image: url('assets/images/ui/bullet-hole.png');
     background-size: 30%;
     background-repeat: no-repeat;
     background-position: center;
