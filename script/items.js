@@ -47,10 +47,10 @@ class Items {
     static useHuazi(isPlayer) {
         if (isPlayer) {
             Game.playerHealth = Math.min(Game.playerHealth + 1, 3);
-            Game.showMessage('🚬 你吸了口煙，恢復1點生命！');
+            Game.showMessage('🚬 你吸了一口煙，恢復1點生命！');
         } else {
             Game.aiHealth = Math.min(Game.aiHealth + 1, 3);
-            Game.showMessage('🚬 AI吸了口煙，恢復1點生命！');
+            Game.showMessage('🚬 AI吸了一口煙，恢復1點生命！');
         }
     }
 
@@ -78,7 +78,7 @@ class Items {
      * @param {boolean} isPlayer 是否為玩家
      */
     static useKnife(isPlayer) {
-        Game.showMessage(`🔪 ${isPlayer ? '你' : 'AI'}锯短了槍管，下一發傷害翻倍！`);
+        Game.showMessage(`🔪 ${isPlayer ? '你' : 'AI'}鋸短了槍管，下一發傷害翻倍！`);
         // 實際傷害翻倍處理應在射擊邏輯中實現
     }
 
@@ -88,7 +88,7 @@ class Items {
     static useDrink() {
         if (Game.chamber.length > 0) {
             const discarded = Game.chamber.pop();
-            Game.showMessage(`🍺 啤酒沖走了${discarded.isLive ? '實彈' : '空包彈'}！`);
+            Game.showMessage(`🍺 啤酒沖走了${discarded.isLive ? '💀實彈' : '✅空包彈'}！`);
         } else {
             Game.showMessage('🍺 槍膛已空，啤酒無效！');
         }
