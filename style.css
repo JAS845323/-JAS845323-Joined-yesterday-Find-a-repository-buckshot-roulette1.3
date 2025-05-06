@@ -3,24 +3,25 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #222;
+    background: url('assets/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
     color: #fff;
     text-align: center;
 }
 
 #game-container {
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 800px;
+    margin: 50px auto;
     padding: 20px;
-    border: 2px solid #444;
-    background-color: #333;
+    background-color: rgba(0, 0, 0, 0.7);
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
 }
 
 #round-display {
-    font-size: 1.5em;
+    font-size: 2rem;
     margin-bottom: 20px;
+    color: #e74c3c;
 }
 
 #health-bars {
@@ -31,10 +32,11 @@ body {
 
 #player-health, #ai-health {
     width: 45%;
+    text-align: left;
 }
 
 .label {
-    font-size: 1em;
+    font-size: 1rem;
     margin-bottom: 5px;
 }
 
@@ -60,7 +62,7 @@ body {
 
 button {
     padding: 10px 20px;
-    font-size: 1em;
+    font-size: 1rem;
     margin: 5px;
     border: none;
     border-radius: 5px;
@@ -81,13 +83,16 @@ button:disabled {
 
 #message-display {
     margin: 20px 0;
-    font-size: 1.2em;
+    font-size: 1.2rem;
     min-height: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
 }
 
 #next-round-button {
     padding: 10px 30px;
-    font-size: 1.2em;
+    font-size: 1.2rem;
     background-color: #27ae60;
     color: #fff;
     border: none;
