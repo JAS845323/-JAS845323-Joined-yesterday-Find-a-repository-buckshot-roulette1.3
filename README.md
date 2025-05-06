@@ -19,4 +19,4 @@
 ## 安裝與運行
 1. 克隆倉庫
    ```bash
-   git clone https://github.com/yourusername/buckshot-roulette.git
+   git clone https://github.com/JAS845323/buckshot-roulette1.3.git
